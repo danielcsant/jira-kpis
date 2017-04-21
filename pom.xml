@@ -22,10 +22,16 @@
         <!-- https://mvnrepository.com/artifact/com.atlassian.jira/jira-api -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-api</artifactId>
+            <artifactId>k</artifactId>
             <version>7.1.0-QR20151229171111</version>
             <scope>system</scope>
             <systemPath>${basedir}/lib/jira-api-7.1.0-QR20151229171111.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.2</version>
         </dependency>
 
     </dependencies>

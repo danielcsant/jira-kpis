@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,11 +96,13 @@ public class JiraManager {
         return output;
     }
 
-    private StringBuilder  generateOutput(BufferedReader reader) throws IOException {
-        StringBuilder  output = new StringBuilder("");
+    private List<String> generateOutput(BufferedReader reader) throws IOException {
+
+
+        List<String> output = new ArrayList<>();
         String line = null;
         while ((line = reader.readLine()) != null) {
-            output.append(line);
+            output.add(line);
         }
         return output;
     }

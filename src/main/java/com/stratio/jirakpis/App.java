@@ -10,6 +10,9 @@ public class App {
 
     public static void main(String[] args) throws IOException {
         try {
+           JiraManager jiraManager = new JiraManager
+                    (BASE_URL,"jmgomez","SC1cPA2pt");
+            jiraManager.getAllBugs("DCS").forEach(s-> System.out.println(s));
             UserInterface ui = new UserInterface();
            JiraManager jiraManager = new JiraManager
                     (BASE_URL,ui.getUser(),ui.getPassword());

@@ -1,6 +1,9 @@
 package com.stratio.jirakpis;
 
+import com.stratio.jirakpis.model.Issue;
+import com.stratio.jirakpis.model.JiraSearch;
 import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class JiraManager {
@@ -22,20 +27,31 @@ public class JiraManager {
         this.baseURL = baseURL;
     }
 
-    public StringBuilder  getAllBugs(String project) throws IOException {
+    public List<Issue> getAllBugs(String project) throws IOException {
         String searchURL = baseURL+"search";
 
         URL url = null;
         URLConnection uc = null;
         StringBuilder output = null;
+        List<Issue> issueList = null;
         try {
             Integer maxResult = stractMaxResult(jiraSearch(project, searchURL,new String[]{} , 1));
-            output = jiraSearch(project, searchURL, new String[]{"\"summary\"", "\"status\"", "\"assignee\""}, maxResult);
+            output = jiraSearch(project, searchURL, new String[]{"\"summary\"", "\"status\"", "\"assignee\"",
+                            "\"issuetype\""},
+                    maxResult);
 
+            ObjectMapper mapper = new ObjectMapper();
+
+            JiraSearch jiraSearch = mapper.readValue(output.toString().getBytes(), JiraSearch.class);
+
+            issueList = jiraSearch.getIssues()
+                    .stream()
+                    .filter(issue -> issue.getFields().getIssueType().getName().equals("Bug"))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return output;
+        return issueList;
     }
 
     private Integer stractMaxResult(StringBuilder stringBuilder) {

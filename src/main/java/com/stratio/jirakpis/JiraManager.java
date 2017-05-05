@@ -1,18 +1,12 @@
 package com.stratio.jirakpis;
 
-import com.stratio.jirakpis.model.Issue;
-import com.stratio.jirakpis.model.JiraSearch;
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class JiraManager {
@@ -21,43 +15,36 @@ public class JiraManager {
     private String user;
     private String password;
 
-    public JiraManager(String baseURL, String user, String password){
+    public JiraManager(String baseURL, String user, String password) {
         this.user = user;
         this.password = password;
         this.baseURL = baseURL;
     }
 
-    public List<Issue> getAllBugs(String project) throws IOException {
-        String searchURL = baseURL+"search";
+    public StringBuilder getAllBugs(String project) throws IOException {
+        String searchURL = baseURL + "search";
 
         URL url = null;
         URLConnection uc = null;
         StringBuilder output = null;
-        List<Issue> issueList = null;
         try {
-            Integer maxResult = stractMaxResult(jiraSearch(project, searchURL,new String[]{} , 1));
+            Integer maxResult = stractMaxResult(jiraSearch(project, searchURL, new String[]{}, 1));
             output = jiraSearch(project, searchURL, new String[]{"\"summary\"", "\"status\"", "\"assignee\"",
                             "\"issuetype\""},
                     maxResult);
 
-            ObjectMapper mapper = new ObjectMapper();
-
-            JiraSearch jiraSearch = mapper.readValue(output.toString().getBytes(), JiraSearch.class);
-
-            issueList = jiraSearch.getIssues()
-                    .stream()
-                    .filter(issue -> issue.getFields().getIssueType().getName().equals("Bug"))
-                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return issueList;
+        return output;
     }
+
+
 
     private Integer stractMaxResult(StringBuilder stringBuilder) {
         String json = stringBuilder.toString();
         String magicWorld = "\"total\":";
-        return Integer.parseInt(json.substring(json.indexOf(magicWorld)+magicWorld.length()).split(",")[0]);
+        return Integer.parseInt(json.substring(json.indexOf(magicWorld) + magicWorld.length()).split(",")[0]);
     }
 
     private StringBuilder jiraSearch(String project, String searchURL,
@@ -71,7 +58,6 @@ public class JiraManager {
 
 
         String userpass = user + ":" + password;
-        System.out.println(userpass);
         String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
 
         uc.setRequestProperty("X-Requested-With", "Curl");
@@ -80,7 +66,7 @@ public class JiraManager {
 
         uc.setDoOutput(true);
         String fields = String.join(",", arrayFields);
-        String json = generateJson(project, maxResult, fields);
+        String json = generateJson(project, maxResult, fields, "bug");
         OutputStream os = uc.getOutputStream();
         os.write(json.getBytes("UTF-8"));
         os.close();
@@ -93,8 +79,10 @@ public class JiraManager {
         return output;
     }
 
-    private StringBuilder  generateOutput(BufferedReader reader) throws IOException {
-        StringBuilder  output = new StringBuilder("");
+    private StringBuilder generateOutput(BufferedReader reader) throws IOException {
+
+
+        StringBuilder output = new StringBuilder("");
         String line = null;
         while ((line = reader.readLine()) != null) {
             output.append(line);
@@ -102,9 +90,9 @@ public class JiraManager {
         return output;
     }
 
-    private String generateJson(String project, final int maxResult, String fields) {
+    private String generateJson(String project, final int maxResult, String fields, String type) {
         return "{\n" +
-                "    \"jql\": \"project = " + project + "\",\n" +
+                "    \"jql\": \"issuetype = "+type+" AND project = " + project + "\",\n" +
                 "    \"startAt\": 0,\n" +
                 "    \"maxResults\": " + maxResult + ",\n" +
                 "    \"fields\": [\n" +
@@ -114,3 +102,5 @@ public class JiraManager {
                 "}";
     }
 }
+
+

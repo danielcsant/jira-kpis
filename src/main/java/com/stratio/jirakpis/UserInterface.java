@@ -38,4 +38,15 @@ public class UserInterface {
         return  br.readLine();
 
     }
+
+    public String getProject() {
+        String project = "";
+        try {
+            project= get("project");
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return project;
+    }
 }

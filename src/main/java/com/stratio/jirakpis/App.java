@@ -1,6 +1,7 @@
 package com.stratio.jirakpis;
 
 import com.stratio.jirakpis.model.Issue;
+import com.stratio.jirakpis.model.Version;
 
 import java.io.*;
 import java.util.List;
@@ -16,11 +17,16 @@ public class App {
            UserInterface ui = new UserInterface();
            JiraManager jiraManager = new JiraManager
                     (BASE_URL,ui.getUser(),ui.getPassword());
-            StringBuilder output = jiraManager.getAllBugs(ui.getProject());
+           String project = ui.getProject();
+            StringBuilder output = jiraManager.getAllBugs(project);
 
             JiraParser jiraParser = new JiraParser();
             List<Issue> issueList = jiraParser.parseBugs(output.toString());
             System.out.println(issueList);
+
+            List<Version> bugsByRelease = jiraManager.getAllBugsByRelease(project);
+            System.out.println(bugsByRelease);
+
             System.out.println("Done");
         } catch (IOException e) {
             e.printStackTrace();

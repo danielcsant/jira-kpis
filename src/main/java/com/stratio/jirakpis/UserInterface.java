@@ -10,43 +10,26 @@ import java.io.InputStreamReader;
 public class UserInterface {
 
     public String getUser(){
-        String user = "";
-        try {
-            user= get("user");
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return user;
+        return get("user");
     }
 
     public String getPassword(){
-        String password = "";
-        try {
-            password= get("password");
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return password;
-    }
-
-
-    private String get(String field) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("Enter "+field+"> ");
-        return  br.readLine();
-
+        return get("password");
     }
 
     public String getProject() {
-        String project = "";
+        return get("project");
+    }
+
+    private String get(String field) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Enter "+field+"> ");
+        String value = "";
         try {
-            project= get("project");
+            value = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-
         }
-        return project;
+        return value;
     }
 }

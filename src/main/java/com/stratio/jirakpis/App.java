@@ -17,22 +17,33 @@ public class App {
            UserInterface ui = new UserInterface();
            JiraManager jiraManager = new JiraManager
                     (BASE_URL,ui.getUser(),ui.getPassword());
-           String project = ui.getProject();
+
+            String project = ui.getProject();
             StringBuilder output = jiraManager.getAllBugs(project);
 
-            JiraParser jiraParser = new JiraParser();
-            List<Issue> issueList = jiraParser.parseBugs(output.toString());
-            System.out.println(issueList);
+            List<Version> bugsByReleaseInJira = jiraManager.getAllBugsByRelease(project);
+            List<Version> bugsByReleaseInPlat = jiraManager.getAllBugsByRelease("PLAT");
 
-            List<Version> bugsByRelease = jiraManager.getAllBugsByRelease(project);
-            System.out.println(bugsByRelease);
+            generateReport(bugsByReleaseInJira, bugsByReleaseInPlat);
 
-            System.out.println("Done");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    private static void generateReport(List<Version> bugsByRelease, List<Version> bugsByReleaseInPlat) {
+        System.out.println();
+        System.out.println("###### Bugs by version in project (found inside Stratio)");
+        for (Version version : bugsByRelease) {
+            System.out.println("Version: " + version.getName() + " has " + version.getIssueList().size() + " bugs");
+        }
+
+        System.out.println();
+        System.out.println("###### Bugs by version in project PLAT (found by the clients)");
+        for (Version version : bugsByReleaseInPlat) {
+            System.out.println("Version: " + version.getName() + " has " + version.getIssueList().size() + " bugs");
+        }
+    }
 
 
 }

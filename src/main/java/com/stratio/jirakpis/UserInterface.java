@@ -10,11 +10,21 @@ import java.io.InputStreamReader;
 public class UserInterface {
 
     public String getUser(){
-        return get("user");
+        return getPropertyOrEnvVal("user", "JIRA_USER");
     }
 
     public String getPassword(){
-        return get("password");
+        return getPropertyOrEnvVal("password", "JIRA_PASS");
+    }
+
+    private String getPropertyOrEnvVal(String property, String envVal) {
+        String value = System.getenv(envVal);
+
+        if (value == null){
+            value = get(property);
+        }
+
+        return value;
     }
 
     public String getProject() {

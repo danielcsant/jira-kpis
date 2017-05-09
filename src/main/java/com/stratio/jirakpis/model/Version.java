@@ -18,7 +18,7 @@ import java.util.Map;
     "id",
     "statusCategory"
 })
-public class Version {
+public class Version implements Comparable<Version> {
 
     @JsonProperty("self")
     private String self;
@@ -113,5 +113,10 @@ public class Version {
 
     public void setIssueList(List<Issue> issueList) {
         this.issueList = issueList;
+    }
+
+    @Override
+    public int compareTo(Version o) {
+        return getName().compareTo(o.getName());
     }
 }
